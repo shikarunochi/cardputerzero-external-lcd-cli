@@ -26,7 +26,7 @@ cmake --build build -j2
 
 SPIとGPIOデバイスにアクセスできる一般ユーザーで実行してください。同じ外付け画面やDC/RSTを使っているプロセスは先に終了します。起動後に `stty size` と入力すると、通常は `16 45` と表示されます。bashで `exit` を入力すると元の端末へ戻ります。アプリを閉じるには `Ctrl+]` に続けて `q` を入力する方法もあります。
 
-同梱の `ext5v auto` は、起動時にExtPortのExt5VをONにし、150 ms待ってから液晶を初期化します。DevTermと同じ `/sys/class/leds/ext_5v_out/brightness` で起動前の状態を読み取り、CLIがOFFからONにしたときだけ終了時にOFFへ戻します。起動前からONだった場合と、状態を読み取れなかった場合は、終了時にOFFを書き込みません。このファイルがない場合は、CardputerZeroと識別できる環境でGPIOを使い、取得したラインを終了時にLOWにして解放します。通常終了とSIGTERMなどで終了処理が動作します。SIGKILLや電源断では終了処理を実行できません。
+同梱の `ext5v auto` は、起動時にExtPortのExt5VをONにし、150 ms待ってから液晶を初期化します。 `/sys/class/leds/ext_5v_out/brightness` で起動前の状態を読み取り、CLIがOFFからONにしたときだけ終了時にOFFへ戻します。起動前からONだった場合と、状態を読み取れなかった場合は、終了時にOFFを書き込みません。このファイルがない場合は、CardputerZeroと識別できる環境でGPIOを使い、取得したラインを終了時にLOWにして解放します。通常終了とSIGTERMなどで終了処理が動作します。SIGKILLや電源断では終了処理を実行できません。
 
 外部電源などでCLIから給電を制御しない場合は、`panel.conf` に `ext5v off` を指定します。
 
