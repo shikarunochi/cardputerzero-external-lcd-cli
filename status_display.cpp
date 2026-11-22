@@ -98,12 +98,17 @@ std::optional<CpuTotals> cpu_totals() {
 std::string memory() {
     std::ifstream file("/proc/meminfo");
     std::string name;
+    uint64_t total = 0;
+    std::optional<uint64_t> available;
     while (file >> name) {
+        if (name == "MemTotal:") file >> total;
         if (name == "MemAvailable:") {
-            unsigned long kib;
-            if (file >> kib) return "RAM " + std::to_string(kib / 1024) + " MiB";
-            break;
+            uint64_t kib;
+            if (file >> kib) available = kib;
         }
+        if (total && available)
+            return "RAM " + std::to_string((total - std::min(total, *available)) / 1024) +
+                   "/" + std::to_string(total / 1024) + " MiB";
         std::getline(file, name);
     }
     return "RAM --";
@@ -113,8 +118,10 @@ std::string storage() {
     struct statvfs fs{};
     if (statvfs("/", &fs) != 0) return "Disk --";
     char buffer[40];
-    std::snprintf(buffer, sizeof buffer, "Disk %.1f GiB",
-                  static_cast<double>(fs.f_bavail) * fs.f_frsize / 1073741824.0);
+    const auto used = fs.f_blocks - std::min(fs.f_blocks, fs.f_bfree);
+    const double gib_per_block = fs.f_frsize / 1073741824.0;
+    std::snprintf(buffer, sizeof buffer, "Disk %.1f/%.1f GiB",
+                  used * gib_per_block, fs.f_blocks * gib_per_block);
     return buffer;
 }
 
