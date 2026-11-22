@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=External LCD CLI
+Icon=share/images/cardputer-external-cli.png
+Exec=/opt/cardputer-cli/start-cardputer-cli
+Terminal=false

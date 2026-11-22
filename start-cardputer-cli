@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+cd /opt/cardputer-cli
+exec ./cardputer-cli --keyboard --status panel.conf
